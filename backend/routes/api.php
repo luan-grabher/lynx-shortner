@@ -19,3 +19,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
+
+//autenticado
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('links', [\App\Http\Controllers\LinkController::class, 'store'])->name('links.store');
+});
