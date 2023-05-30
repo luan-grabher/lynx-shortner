@@ -100,17 +100,16 @@ class LinkController extends Controller
     public function redirect($identifier)
     {
         $link = Link::where('identifier', $identifier)->first();
-        if (!$link) {
-            return response()->json(['message' => 'Link não encontrado.'], 404);
-        }
+
+        if (!$link) return response()->json(['message' => 'Link não encontrado.'], 404);
 
         $link->increment('access_count');
         $link->save();
 
         $accessData = [
-            'link_id' => $link->id,
-            'ip' => request()->ip(),
-            'user_agent' => request()->header('User-Agent'),
+            'link_id'       => $link->id,
+            'ip'            => request()->ip(),
+            'user_agent'    => request()->header('User-Agent'),
         ];
         AccessMetric::create($accessData);
 
