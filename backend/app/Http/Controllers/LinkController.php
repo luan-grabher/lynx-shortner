@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccessMetric;
 use App\Models\Link;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
@@ -94,5 +95,25 @@ class LinkController extends Controller
         $link->save();
 
         return response()->json(['message' => 'Link atualizado com sucesso!', 'link' => $link], 200);
+    }
+
+    public function redirect($identifier)
+    {
+        $link = Link::where('identifier', $identifier)->first();
+        if (!$link) {
+            return response()->json(['message' => 'Link não encontrado.'], 404);
+        }
+
+        $link->increment('access_count');
+        $link->save();
+
+        $accessData = [
+            'link_id' => $link->id,
+            'ip' => request()->ip(),
+            'user_agent' => request()->header('User-Agent'),
+        ];
+        AccessMetric::create($accessData);
+
+        return redirect($link->url);
     }
 }

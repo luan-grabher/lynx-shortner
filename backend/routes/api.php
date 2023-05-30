@@ -30,6 +30,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('links', [LinkController::class, 'store'])->name('links.store');
     Route::get('/links', [LinkController::class, 'list'])->name('links.list');
+
     Route::delete('/links/{id}', [LinkController::class, 'destroy'])->name('links.destroy');
     Route::put('/links/{id}', [LinkController::class, 'update'])->name('links.update');
 });
+
+Route::get('/r/{identifier}', [LinkController::class, 'redirect']);
