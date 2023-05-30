@@ -67,4 +67,32 @@ class LinkController extends Controller
 
         return response()->json(['message' => 'Link removido com sucesso!']);
     }
+
+    public function update(Request $request, $id)
+    {
+        $link = Link::find($id);
+        if (!$link) {
+            return response()->json(['message' => 'Link não encontrado.'], 404);
+        }
+
+        // Verificar se o usuário autenticado possui permissão para remover o link
+        if ($link->user_id !== auth()->user()->id) {
+            return response()->json(['message' => 'Você não tem permissão para atualizar este link.'], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'url' => 'nullable|url',
+            'identifier' => 'nullable|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $link->url = $request->input('url') ?? $link->url;
+        $link->identifier = $request->input('identifier') ?? $link->identifier ?? Link::generateIdentifier();
+        $link->save();
+
+        return response()->json(['message' => 'Link atualizado com sucesso!', 'link' => $link], 200);
+    }
 }
