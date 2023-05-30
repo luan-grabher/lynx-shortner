@@ -30,4 +30,9 @@ class Link extends Model
 
         return $identifier;
     }
+
+    public function accessMetrics()
+    {
+        return $this->hasMany(AccessMetric::class);
+    }
 }

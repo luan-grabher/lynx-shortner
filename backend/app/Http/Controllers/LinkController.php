@@ -49,6 +49,10 @@ class LinkController extends Controller
             ->orderBy('id', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
 
+        foreach ($links as $link) {
+            $link->metrics = $link->accessMetrics()->orderBy('id', 'desc')->get();
+        }
+
         return response()->json($links, 200);
     }
 
@@ -114,5 +118,22 @@ class LinkController extends Controller
         AccessMetric::create($accessData);
 
         return redirect($link->url);
+    }
+
+    public function show($id)
+    {
+        $link = Link::find($id);
+        if (!$link) {
+            return response()->json(['message' => 'Link não encontrado.'], 404);
+        }
+
+        // Verificar se o usuário autenticado possui permissão para remover o link
+        if ($link->user_id !== auth()->user()->id) {
+            return response()->json(['message' => 'Você não tem permissão para visualizar este link.'], 403);
+        }
+
+        $link->metrics = $link->accessMetrics()->orderBy('id', 'desc')->get();
+
+        return response()->json($link, 200);
     }
 }

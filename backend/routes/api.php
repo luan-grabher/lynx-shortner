@@ -33,4 +33,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::delete('/links/{id}', [LinkController::class, 'destroy'])->name('links.destroy');
     Route::put('/links/{id}', [LinkController::class, 'update'])->name('links.update');
+    Route::get('/links/{id}', [LinkController::class, 'show'])->name('links.show');
 });
