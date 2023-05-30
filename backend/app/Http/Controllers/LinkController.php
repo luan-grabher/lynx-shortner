@@ -30,7 +30,7 @@ class LinkController extends Controller
         return response()->json(['message' => 'Link criado com sucesso!', 'link' => $link], 201);
     }
 
-    public function index(Request $request)
+    public function list(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'page' => 'nullable|integer',
@@ -49,5 +49,22 @@ class LinkController extends Controller
             ->paginate($perPage, ['*'], 'page', $page);
 
         return response()->json($links, 200);
+    }
+
+    public function destroy($id)
+    {
+        $link = Link::find($id);
+        if (!$link) {
+            return response()->json(['message' => 'Link não encontrado.'], 404);
+        }
+
+        // Verificar se o usuário autenticado possui permissão para remover o link
+        if ($link->user_id !== auth()->user()->id) {
+            return response()->json(['message' => 'Você não tem permissão para remover este link.'], 403);
+        }
+
+        $link->delete();
+
+        return response()->json(['message' => 'Link removido com sucesso!']);
     }
 }

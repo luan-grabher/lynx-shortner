@@ -29,5 +29,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
     Route::post('links', [LinkController::class, 'store'])->name('links.store');
-    Route::get('/links', [LinkController::class, 'index']);
+    Route::get('/links', [LinkController::class, 'list'])->name('links.list');
+    Route::delete('/links/{id}', [LinkController::class, 'destroy'])->name('links.destroy');
 });
