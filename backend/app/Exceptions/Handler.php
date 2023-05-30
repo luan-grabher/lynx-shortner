@@ -47,4 +47,12 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    public function render($request, Throwable $exception)
+    {
+        $isProduction = app()->environment('production');
+        $message = $isProduction ? 'Erro interno no servidor' : $exception->getMessage();
+
+        return response()->json(['error' => $message], 500);
+    }
 }
